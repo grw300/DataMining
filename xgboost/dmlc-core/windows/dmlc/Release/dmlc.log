@@ -1,0 +1,57 @@
+﻿  data.cc
+c:\users\grw300\documents\git\xgboost\dmlc-core\src\data/parser.h(99): warning C4244: 'argument': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+  c:\users\grw300\documents\git\xgboost\dmlc-core\src\data/parser.h(95): note: while compiling class template member function 'bool dmlc::data::ThreadedParser<IndexType>::Next(void)'
+          with
+          [
+              IndexType=uint64_t
+          ]
+  ..\..\src\data.cc(30): note: see reference to class template instantiation 'dmlc::data::ThreadedParser<IndexType>' being compiled
+          with
+          [
+              IndexType=uint64_t
+          ]
+  ..\..\src\data.cc(137): note: see reference to function template instantiation 'dmlc::Parser<uint64_t> *dmlc::data::CreateLibSVMParser<uint64_t>(const std::string &,const std::map<std::string,std::string,std::less<_Kty>,std::allocator<std::pair<const _Kty,_Ty>>> &,unsigned int,unsigned int)' being compiled
+          with
+          [
+              _Kty=std::string,
+              _Ty=std::string
+          ]
+c:\users\grw300\documents\git\xgboost\dmlc-core\src\data/parser.h(100): warning C4244: 'argument': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+c:\users\grw300\documents\git\xgboost\dmlc-core\src\data/parser.h(34): warning C4244: 'argument': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+  c:\users\grw300\documents\git\xgboost\dmlc-core\src\data/parser.h(30): note: while compiling class template member function 'bool dmlc::data::ParserImpl<IndexType>::Next(void)'
+          with
+          [
+              IndexType=uint64_t
+          ]
+  c:\users\grw300\documents\git\xgboost\dmlc-core\src\data\./text_parser.h(25): note: see reference to class template instantiation 'dmlc::data::ParserImpl<IndexType>' being compiled
+          with
+          [
+              IndexType=uint64_t
+          ]
+  c:\users\grw300\documents\git\xgboost\dmlc-core\src\data\./libsvm_parser.h(23): note: see reference to class template instantiation 'dmlc::data::TextParserBase<IndexType>' being compiled
+          with
+          [
+              IndexType=uint64_t
+          ]
+  ..\..\src\data.cc(28): note: see reference to class template instantiation 'dmlc::data::LibSVMParser<IndexType>' being compiled
+          with
+          [
+              IndexType=uint64_t
+          ]
+c:\users\grw300\documents\git\xgboost\dmlc-core\src\data/parser.h(35): warning C4244: 'argument': conversion from 'uint64_t' to 'unsigned int', possible loss of data
+  io.cc
+c:\users\grw300\documents\git\xgboost\dmlc-core\src\io/single_file_split.h(33): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
+  input_split_base.cc
+  line_split.cc
+  local_filesys.cc
+..\..\src\io\local_filesys.cc(66): warning C4244: '=': conversion from '__int64' to 'size_t', possible loss of data
+..\..\src\io\local_filesys.cc(62): warning C4996: 'strerror': This function or variable may be unsafe. Consider using strerror_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(178): note: see declaration of 'strerror'
+..\..\src\io\local_filesys.cc(105): warning C4996: 'strerror': This function or variable may be unsafe. Consider using strerror_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\string.h(178): note: see declaration of 'strerror'
+..\..\src\io\local_filesys.cc(144): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(205): note: see declaration of 'fopen'
+  recordio_split.cc
+  recordio.cc
+  dmlc.vcxproj -> C:\Users\grw300\Documents\git\xgboost\dmlc-core\windows\Release\dmlc.lib
