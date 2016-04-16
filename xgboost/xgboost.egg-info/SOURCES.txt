@@ -1,0 +1,6 @@
+xgboost.egg-info/PKG-INFO
+xgboost.egg-info/SOURCES.txt
+xgboost.egg-info/dependency_links.txt
+xgboost.egg-info/not-zip-safe
+xgboost.egg-info/requires.txt
+xgboost.egg-info/top_level.txt
