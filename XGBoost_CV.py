@@ -9,71 +9,66 @@ from sklearn.linear_model import LogisticRegression
 from sklearn import cross_validation, metrics
 from sklearn.grid_search import GridSearchCV
 
+if __name__ == "__main__":
 
-def xgb_apply(estimators, X):
-    X = estimators_[0, 0]._validate_X_predict(X, check_input=True)
+    kagTrainDat = pd.read_csv('~/Documents/git/DataMining/train.csv')
+    kagTestDat = pd.read_csv('~/Documents/git/DataMining/test.csv')
 
-    # n_classes will be equal to 1 in the binary classification or the
-    # regression case.
-    n_estimators, n_classes = self.estimators_.shape
-    leaves = np.zeros((X.shape[0], n_estimators, n_classes))
+    y_train = kagTrainDat['ACTION']
+    X_train = kagTrainDat.ix[:, kagTrainDat.columns != 'ACTION']
 
-    for i in range(n_estimators):
-        for j in range(n_classes):
-            estimator = self.estimators_[i, j]
-            leaves[:, i, j] = estimator.apply(X, check_input=False)
+    X_test = kagTestDat.ix[:, kagTestDat.columns != 'id']
 
-    return leaves
+    D_train = xgb.DMatrix(X_train.values, label=y_train.values)
+    D_test = xgb.DMatrix(X_test.values)
 
-kagTrainDat = pd.read_csv('~/Documents/git/DataMining/train.csv')
-kagTestDat = pd.read_csv('~/Documents/git/DataMining/test.csv')
+    # specify parameters via map, definition are same as c++ version
+    param = {'max_depth': 7, 'eta': 0.14, 'silent': 1, 'min_child_weight': 1, 'n_estimators': 358,
+             'objective': 'binary:logistic', 'seed': 42, 'eval_metric': 'auc'}
 
-y_train = kagTrainDat['ACTION']
-X_train = kagTrainDat.ix[:, kagTrainDat.columns != 'ACTION']
+    # specify validations set to watch performance
+    watchlist = [(D_train, 'train')]
+    num_round = 10000
+    evals_result = {}
+    bst = xgb.train(param, D_train, num_round, watchlist, early_stopping_rounds=500,
+                    evals_result=evals_result, verbose_eval=False)
 
-X_test = kagTestDat.ix[:, kagTestDat.columns != 'id']
+    y_test = bst.predict(D_test)
 
-D_train = xgb.DMatrix(X_train.values, label=y_train.values)
-D_test = xgb.DMatrix(X_test.values)
+    param_skl = {'max_delta_step': 0, 'learning_rate': 0.14, 'colsample_bytree': 0.5, 'silent': True,
+                 'min_child_weight': 1, 'scale_pos_weight': 1, 'max_depth': 7, 'seed': 42, 'subsample': 0.7,
+                 'objective': 'binary:logistic', 'nthread': multiprocessing.cpu_count(), 'reg_lambda': 1,
+                 'reg_alpha': 0, 'missing': None, 'base_score': 0.5, 'n_estimators': 358, 'colsample_bylevel': 1,
+                 'gamma': 0.2}
 
+    gbf = xgb.XGBClassifier(**param_skl)
 
-# specify parameters via map, definition are same as c++ version
-param = {'max_depth': 7, 'eta': 0.1, 'silent': 1, 'min_child_weight': 1, 'n_estimators': 280,
-         'objective': 'binary:logistic', 'eval_metric': 'auc'}
+    gbf_enc = OneHotEncoder(handle_unknown='ignore')
+    gbf_lm = LogisticRegression()
+    gbf.fit(X_train, y_train)
+    gbf_enc.fit(X_train)
+    gbf_lm.fit(gbf_enc.transform(X_train), y_train)
 
-# specify validations set to watch performance
-watchlist = [(D_train, 'train')]
-num_round = 10000
-evals_result = {}
-bst = xgb.train(param, D_train, num_round, watchlist, early_stopping_rounds=500,
-                evals_result=evals_result, verbose_eval=False)
+    y_test_enc = gbf_lm.predict_proba(gbf_enc.transform(X_test))[:, 1]
 
-y_test = bst.predict(D_test)
+    y_sub = 0.45*y_test + 0.55*y_test_enc
 
-param_skl = {'max_delta_step': 0, 'learning_rate': 0.1, 'colsample_bytree': 0.5, 'silent': True, 'min_child_weight': 1,
-             'scale_pos_weight': 1, 'max_depth': 7, 'seed': 0, 'subsample': 0.7, 'objective': 'binary:logistic',
-             'nthread': multiprocessing.cpu_count(), 'reg_lambda': 1, 'reg_alpha': 0, 'missing': None,
-             'base_score': 0.5, 'n_estimators': 280, 'colsample_bylevel': 1, 'gamma': 0.2}
+    submission = pd.Series(data=y_sub, name='Action', index=kagTestDat['id'])
 
-xgb = xgb.XGBClassifier(**param_skl)
+    submission.to_csv("~/Documents/git/DataMining/submission_xgboost.csv",
+                      index=True,
+                      sep=',',
+                      header=True)
 
-xgb_enc = OneHotEncoder(handle_unknown='ignore')
-xgb_lm = LogisticRegression()
-xgb.fit(X_train, y_train)
-xgb_enc.fit(X_train)
-xgb_lm.fit(xgb_enc.transform(X_train), y_train)
+    # cv_result = xgb.cv(param, D_train, num_round, nfold=5, early_stopping_rounds=100,
+    #                    metrics="auc", verbose_eval=500)
 
-y_test_enc = xgb_lm.predict_proba(xgb_enc.transform(X_test))[:, 1]
+    # param_test = {
+    #    'learning_rate': [0.13, 0.14, 0.15, 0.17],
+    # }
 
-y_sub = (y_test + y_test_enc) / 2.0
+    # grid_search = GridSearchCV(gbf,
+    #                           param_grid=param_test, scoring='roc_auc', n_jobs=multiprocessing.cpu_count(), cv=5)
 
-submission = pd.Series(data=y_sub, name='Action', index=kagTestDat['id'])
-
-submission.to_csv("~/Documents/git/DataMining/submission_xgboost.csv",
-                  index=True,
-                  sep=',',
-                  header=True)
-
-
-#print(bst.get_dump())
-
+    # grid_search.fit(X_train, y_train)
+    # print(grid_search.best_params_, grid_search.best_score_)
